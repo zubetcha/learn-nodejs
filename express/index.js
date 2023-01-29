@@ -1,44 +1,18 @@
 const express = require('express');
 const morgan = require('morgan');
+const user = require('./api/user');
+
 const app = express();
 
-// 미들웨어는 인터페이스가 정해져 있음
-// (req, res, next) => {}
-function logger(req, res, next) {
-  console.log('i am logger');
-  next();
-}
-
-function logger2(req, res, next) {
-  console.log('i am logger2');
-  next();
-}
-
-// 미들웨어 사용
-app.use(logger);
-app.use(logger2);
 app.use(morgan('dev'));
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-// 일반 미들웨어
-function commonMW(req, res, next) {
-  console.log('common MW');
-  next(new Error('error occured'));
-}
-
-// 에러 미들웨어
-function errorMW(err, req, res, next) {
-  console.log(err.message);
-
-  // 에러를 처리하거나
-  next();
-
-  // 에러를 처리하지 못했다면 그대로 next에 넘김
-  // next(err);
-}
-
-app.use(commonMW);
-app.use(errorMW);
+// /users 경로로 들어오는 모든 요청은 user 모듈이 담당
+app.use('/users', user);
 
 app.listen(3000, function () {
-  console.log('Server is running');
+  console.log('Example app listening on port 3000');
 });
+
+module.exports = app;

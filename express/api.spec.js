@@ -1,7 +1,7 @@
 const request = require('supertest');
 const should = require('should');
 
-const app = require('./api');
+const app = require('.');
 
 describe('GET /users는 ', () => {
   describe('성공 시 ', () => {
