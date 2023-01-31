@@ -3,9 +3,26 @@
 const request = require('supertest');
 const should = require('should');
 const app = require('../../');
+const models = require('../../models');
 
 describe('GET /users는 ', () => {
   describe('성공 시 ', () => {
+    const users = [
+      {
+        name: 'alice',
+      },
+      { name: 'bek' },
+      { name: 'chris' },
+    ];
+
+    before((done) => {
+      return models.sequelize.sync({ force: true });
+    });
+
+    before(() => {
+      return models.User.bulkCreate(users);
+    });
+
     it('유저 객체를 담은 배열로 응답한다.', (done) => {
       request(app)
         .get('/users')
@@ -32,7 +49,7 @@ describe('GET /users는 ', () => {
   });
 });
 
-describe('GET /users/:id 은 ', () => {
+describe.only('GET /users/:id 은 ', () => {
   describe('성공 시 ', () => {
     it('id가 1인 유저 객체를 반환한다.', (done) => {
       request(app)

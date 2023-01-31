@@ -1,19 +1,6 @@
 // API 로직
 
-let users = [
-  {
-    id: 1,
-    name: 'zubetcha',
-  },
-  {
-    id: 2,
-    name: 'cookie',
-  },
-  {
-    id: 3,
-    name: 'cake',
-  },
-];
+const models = require('../../models');
 
 const index = function (req, res) {
   req.query.limit = req.query.limit || 10;
@@ -24,7 +11,13 @@ const index = function (req, res) {
     return res.status(400).end();
   }
 
-  res.json(users.slice(0, limit));
+  models.User.findAll({
+    limit,
+  }).then((users) => {
+    res.json(users);
+  });
+
+  // res.json(users.slice(0, limit));
 };
 
 const show = function (req, res) {
@@ -34,13 +27,16 @@ const show = function (req, res) {
     return res.status(400).end();
   }
 
-  const user = users.find((user) => user.id === id);
-
-  if (!user) {
-    return res.status(404).end();
-  }
-
-  res.json(user);
+  models.User.findOne({
+    where: {
+      id,
+    },
+  }).then((user) => {
+    if (!user) {
+      return res.status(404).end();
+    }
+    return res.json(user);
+  });
 };
 
 const destroy = function (req, res) {
